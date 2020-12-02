@@ -94,6 +94,7 @@ def main(args):
     plot_line(axs[0], b_lmn)
     axs[0].legend(["$B_L$", "$B_M$", "$B_N$"], **cfg["figure"]["legend"])
     axs[0].set_ylabel("$B$ [nT]")
+    axs[0].grid(True, which="both")
 
     plot_line(axs[1], v_lmn_i[:, 1], "tab:blue")
     plot_line(axs[1], v_str_lmn_filtered[:, 1], "k")
@@ -102,6 +103,7 @@ def main(args):
     axs[1].legend(["Ions", "STD", "Timing"], **cfg["figure"]["legend"])
     axs[1].set_ylim([-650, 650])
     axs[1].set_ylabel("$V_M$ [km s$^{-1}$]")
+    axs[1].grid(True, which="both")
 
     plot_line(axs[2], v_lmn_e[:, 2], "tab:red")
     plot_line(axs[2], v_str_lmn_filtered[:, 2], "k")
@@ -110,6 +112,7 @@ def main(args):
     axs[2].legend(["Electrons", "STD", "Timing"], **cfg["figure"]["legend"])
     axs[2].set_ylim([-650, 650])
     axs[2].set_ylabel("$V_N$ [km s$^{-1}$]")
+    axs[2].grid(True, which="both")
 
     axs[-1].set_xlabel("2019-09-14 UTC")
     axs[-1].set_xlim(tint)
@@ -118,17 +121,28 @@ def main(args):
     labels_pos = [0.02, 0.92]
     _ = make_labels(axs, labels_pos)
 
-    if args.save:
-        fig.savefig(args.fname, **cfg["figure"]["save"])
+    if args.figname:
+        fig.savefig(args.figname, **cfg["figure"]["save"])
     else:
         plt.show()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-s", "--save", help="save figure as png", action="store_true")
-    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    parser.add_argument("--config", type=str, required=True, help="Path to (.yml) config file.")
-    parser.add_argument("--timing", type=str, required=True, help="Path to (.h5) timing file.")
+    parser.add_argument("-v", "--verbose",
+                        help="increase output verbosity",
+                        action="store_true")
+
+    parser.add_argument("--config",
+                        help="Path to (.yml) config file.",
+                        type=str, required=True)
+
+    parser.add_argument("--timing",
+                        help="Path to (.h5) timing file.",
+                        type=str, required=True)
+
+    parser.add_argument("--figname",
+                        help="Path and name of the figure to save with extension.",
+                        type=str, default="")
 
     main(parser.parse_args())

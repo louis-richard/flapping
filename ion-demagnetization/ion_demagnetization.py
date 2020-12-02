@@ -107,6 +107,7 @@ def main(args):
     axs[0].set_ylim([-14, 14])
     axs[0].set_ylabel("$B$ [nT]")
     axs[0].legend(["$B_L$", "$B_M$", "$B_N$"], **cfg["figure"]["legend"])
+    axs[0].grid(True, which="both")
 
     # kappa_i, kappa_e
     plot_line(axs[1], kappa_i_filtered, "tab:blue")
@@ -116,6 +117,7 @@ def main(args):
     axs[1].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
     axs[1].set_yscale("log")
     axs[1].set_ylabel("$\\kappa^2$")
+    axs[1].grid(True, which="both")
 
     # ViM, VeM, B_L
     plot_line(axs[2], v_lmn_i[:, 1], "tab:blue")
@@ -123,6 +125,7 @@ def main(args):
     axs[2].set_ylim([-420, 420])
     axs[2].set_ylabel("$V_M$ [km s$^{-1}$]")
     axs[2].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
+    axs[2].grid(True, which="both")
 
     # ViN, VeN, B_L
     plot_line(axs[3], v_lmn_i[:, 2], "tab:blue")
@@ -130,6 +133,7 @@ def main(args):
     axs[3].set_ylim([-420, 420])
     axs[3].set_ylabel("$V_N$ [km s$^{-1}$]")
     axs[3].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
+    axs[3].grid(True, which="both")
 
     # Ni, Ne, B_L
     plot_line(axs[4], n_i, "tab:blue")
@@ -137,6 +141,7 @@ def main(args):
     axs[4].set_ylim([0.06, 0.34])
     axs[4].set_ylabel("$N$ [cm$^{-3}$]")
     axs[4].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
+    axs[4].grid(True, which="both")
 
     # JM, JN, B_L
     plot_line(axs[5], j_lmn[:, 1], "tab:orange")
@@ -144,6 +149,7 @@ def main(args):
     axs[5].set_ylim([-28, 28])
     axs[5].set_ylabel("$J$ [nA m$^{-2}$]")
     axs[5].legend(["$J_M$", "$J_N$"], **cfg["figure"]["legend"])
+    axs[5].grid(True, which="both")
 
     # Add magnetic field to all axes
     for ax in axs[2:]:

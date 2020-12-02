@@ -53,3 +53,8 @@ figure:
     frameon: True
     # Legend location
     loc: "upper right"
+
+  # Save parameters
+  save:
+    # DPI
+    dpi: 500

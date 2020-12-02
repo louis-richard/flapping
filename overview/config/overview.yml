@@ -41,3 +41,8 @@ figure:
     bottom: 0.1
     # Top bound
     top: 0.95
+
+  # Save parameters
+  save:
+    # DPI
+    dpi: 500

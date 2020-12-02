@@ -87,11 +87,14 @@ def main(args):
     axs10[0].legend(["$B_x$", "$B_y$", "$B_z$"], loc="upper right", **legend_options)
     axs10[0].set_ylim([-23, 23])
     axs10[0].set_ylabel("$B$ [nT]")
+    axs10[0].grid(True, which="both")
 
     # Ions bulk velocity
     plot_line(axs10[1], v_xyz_i)
     axs10[1].legend(["$V_{ix}$", "$V_{iy}$", "$V_{iz}$"], loc="upper right", **legend_options)
     axs10[1].set_ylabel("$V_i$ [km s$^{-1}$]")
+    axs10[1].grid(True, which="both")
+
 
     # Ions energy spectrum
     axs10[2], caxs02 = plot_spectr(axs10[2], def_omni_i, clim=[1e4, 1e6], **spectr_options)
@@ -100,6 +103,7 @@ def main(args):
     axs10[2].legend(["$T_{i,\\perp}$", "$T_{i,\\parallel}$"], loc="lower right", **legend_options)
     axs10[2].set_ylabel("$E_i$ [eV]")
     caxs02.set_ylabel("DEF" + "\n" + "[kev/(cm$^2$ s sr keV)]")
+    axs10[2].grid(False, which="both")
 
     # Electrons energy spectrum
     axs10[3], caxs11 = plot_spectr(axs10[3], def_omni_e, clim=[1e5, 3e7], **spectr_options)
@@ -108,6 +112,7 @@ def main(args):
     axs10[3].legend(["$T_{e,\\perp}$", "$T_{e,\\parallel}$"], loc="lower right", **legend_options)
     axs10[3].set_ylabel("$E_e$ [eV]")
     caxs11.set_ylabel("DEF" + "\n" + "[kev/(cm$^2$ s sr keV)]")
+    axs10[3].grid(False, which="both")
 
     axs10[-1].get_shared_x_axes().join(*axs10)
 
@@ -121,6 +126,7 @@ def main(args):
     axs11[0].legend(["$B_x$", "$B_y$", "$B_z$"], loc="upper right", **legend_options)
     axs11[0].set_ylim([-15, 15])
     axs11[0].set_ylabel("$B$ [nT]")
+    axs11[0].grid(True, which="both")
 
     span_options = dict(linestyle="--", linewidth=0.8, facecolor="none", edgecolor="k")
     span_tint(axs10, tint_flap, **span_options)
@@ -147,7 +153,7 @@ def main(args):
     _ = make_labels(axs10 + axs11, labels_pos)
 
     if args.figname:
-        fig.savefig(args.figname, **cfg["figure"]["save"])
+        fig.savefig(args.figname)
     else:
         plt.show()
 

@@ -125,6 +125,7 @@ def main(args):
     axs0[0].set_xlabel("d$_t B_L$ [nT s$^{-1}$]")
     axs0[0].set_ylabel("$J_N$ [nA m$^{-2}$]")
     caxs00.set_ylabel("#")
+    axs0[0].grid(True, which="both")
 
     h_lambda = scaling_lr.h.data * scaling_lr.k.data / (2 * np.pi)
     _, _, _ = axs0[1].hist(h_lambda, **cfg["figure"]["hist"])
@@ -140,9 +141,10 @@ def main(args):
     rect_sigma = plt.Rectangle((left_bound, ymax - 2.1 * height), width, height, color='lightgrey')
     axs0[1].add_patch(rect_drift)
     axs0[1].add_patch(rect_sigma)
-
     axs0[1].set_xlabel("$h/\\lambda$")
     axs0[1].set_ylabel("#")
+    axs0[1].grid(True, which="both")
+
     axs1[0].errorbar(disprel_lr.k.data, disprel_lr.omega.data,
                      disprel_lr.omega_err.data, disprel_lr.k_err.data,
                      color="tab:blue", **cfg["figure"]["errorbar"])
@@ -170,6 +172,7 @@ def main(args):
 
     axs1[0].yaxis.set_label_position("right")
     axs1[0].yaxis.tick_right()
+    axs1[0].grid(True, which="both")
 
     axs1[1].errorbar(scaling_lr.k, scaling_lr.h,
                      scaling_lr.dh, scaling_lr.dk,
@@ -202,6 +205,7 @@ def main(args):
     axs1[1].yaxis.tick_right()
     axs1[1].set_xlim([0, 2.6e-3])
     axs1[1].set_ylim([0, 8500])
+    axs1[1].grid(True, which="both")
 
     # Add panels labels
     labels_pos = [0.05, 0.95]

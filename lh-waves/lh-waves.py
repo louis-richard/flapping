@@ -182,12 +182,22 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mms-id", type=int, choices=[1, 2, 3, 4], required=True,
-                        help="Spacecraft index")
-    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    parser.add_argument("--figname", help="Path and name of the figure to save with extension.",
+    parser.add_argument("--mms-id",
+                        help="Spacecraft index",
+                        choices=[1, 2, 3, 4],
+                        type=int, required=True)
+
+    parser.add_argument("-v", "--verbose",
+                        help="increase output verbosity",
+                        action="store_true")
+
+    parser.add_argument("--figname",
+                        help="Path and name of the figure to save with extension.",
                         type=str, default="")
-    parser.add_argument("--config", type=str, required=True, help="Path to (.yml) config file.")
+
+    parser.add_argument("--config",
+                        help="Path to (.yml) config file.",
+                        type=str, required=True)
 
     # Time interval
     main(parser.parse_args())

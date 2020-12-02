@@ -100,6 +100,7 @@ def main(args):
         plot_line(axs[0], b_lmn)
         axs[0].legend(["$B_L$", "$B_M$", "$B_N$"], **cfg["figure"]["legend"])
         axs[0].set_ylabel("$B$" + "\n" + "[nT]")
+        axs[0].grid(True, which="both")
 
         plot_line(axs[1], jxb_lmn[:, 1])
         plot_line(axs[1], -vxb_lmn_i[:, 1])
@@ -109,6 +110,7 @@ def main(args):
         axs[1].legend(labels, **cfg["figure"]["legend"])
         axs[1].set_ylim([-12, 12])
         axs[1].set_ylabel("$E_M$" + "\n" + "[mV m$^{-1}$]")
+        axs[1].grid(True, which="both")
 
         plot_line(axs[2], jxb_lmn[:, 2])
         plot_line(axs[2], -vxb_lmn_i[:, 2])
@@ -118,6 +120,7 @@ def main(args):
         axs[2].legend(labels, **cfg["figure"]["legend"])
         axs[2].set_ylim([-12, 12])
         axs[2].set_ylabel("$E_N$" + "\n" + "[mV m$^{-1}$]")
+        axs[2].grid(True, which="both")
 
         plot_line(axs[3], norm(e_xyz + vxb_lmn_i), "deeppink")
         plot_line(axs[3], norm(jxb_lmn), "k")
@@ -125,6 +128,7 @@ def main(args):
         axs[3].legend(labels, **cfg["figure"]["legend"])
         axs[3].set_ylim([0, 12])
         axs[3].set_ylabel("$|E|$" + "\n" + "[mV m$^{-1}$]")
+        axs[3].grid(True, which="both")
 
         axs[-1].set_xlabel("2019-09-14 UTC")
         axs[-1].get_shared_x_axes().join(*axs)
@@ -151,7 +155,6 @@ def main(args):
     lbl = string.ascii_lowercase[:len(axs)]
 
     for label, axis in zip(lbl, axs):
-        axis.grid(True, which="both")
         axis.text(posx_text, posy_text, "({})".format(label), transform=axis.transAxes)
 
     if args.figname:
