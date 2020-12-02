@@ -1,0 +1,76 @@
+# Time intervals
+tint: ["2019-09-14T07:54:00.000", "2019-09-14T08:11:00.000"]
+
+# Flux Gate Magnetometer parameters
+fgm:
+  # Flux Gate Magnetometer data rate
+  data_rate: "srvy"
+  # Flux Gate Magnetometer data level
+  level: "l2"
+
+# Fast Plasma Investigation parameters
+fpi:
+  # Fast Plasma Investigation data rate
+  data_rate: "fast"
+  # Fast Plasma Investigation data level
+  level: "l2"
+  # Moments type
+  moments: "partial"
+  # Ion partial moment split index
+  part_idx_i: 19
+  # Electron partial moment split index
+  part_idx_e: 7
+
+# Figure parameters
+figure:
+  # Figure size
+  figsize: [6.5, 9]
+
+
+
+# Figure parameters
+figure:
+  # Main parameters
+  main:
+    # Figure size
+    figsize: [16, 9]
+
+  # Grid spec parameters
+  gridspec:
+    # Left bound
+    left: 0.06
+    # Right bound
+    right: 0.94
+    # Bottom bound
+    bottom: 0.1
+    # Top bound
+    top: 0.95
+    # Vertical spacing
+    hspace: 0.4
+    # Horizontal spacing
+    wspace: 0.4
+
+  # Error bars parameters
+  errorbar:
+    # Line style
+    linestyle: ""
+    # Marker style
+    marker: "s"
+    # Marker size
+    markersize: 3
+    # Marker color
+    color: "tab:red"
+
+  # Legend parameters
+  legend:
+    # Number of columns
+    ncol: 3
+    # Show frame
+    frameon: True
+    # Legend location
+    loc: "upper right"
+
+  # Save parameters
+  save:
+    # DPI
+    dpi: 500

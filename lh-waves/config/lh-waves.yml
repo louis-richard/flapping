@@ -1,0 +1,74 @@
+# Time intervals
+tints:
+  # Flapping time interval
+  flapping: ["2019-09-14T07:54:00.000", "2019-09-14T08:11:00.000"]
+  # Close-up time interval
+  close-up: ["2019-09-14T08:00:00.000", "2019-09-14T08:02:00.000"]
+
+# Flux Gate Magnetometer parameters
+fgm:
+  # Flux Gate Magnetometer data rate
+  data_rate: "srvy"
+  # Flux Gate Magnetometer data level
+  level: "l2"
+
+# Electric Double Probe parameters
+edp:
+  # Electric Double Probe data rate
+  data_rate: "brst"
+  # Electric Double Probe data level
+  level: "l2"
+
+# Search Coil Magnetometer parameters
+scm:
+  # Search Coil Magnetometer data rate
+  data_rate: "brst"
+  # Search Coil Magnetometer data level
+  level: "l2"
+
+# Fast Plasma Investigation parameters
+fpi:
+  # Fast Plasma Investigation data rate
+  data_rate: "fast"
+  # Fast Plasma Investigation data level
+  level: "l2"
+  # Moments type
+  moments: "partial"
+  # Ion partial moment split index
+  part_idx_i: 19
+  # Electron partial moment split index
+  part_idx_e: 7
+
+# Figure parameters
+figure:
+  main:
+    # Share time axis
+    sharex: "all"
+    # Figure size
+    figsize: [6.5, 9]
+
+
+  # Legend parameters
+  legend:
+    # Number of columns in the legend box
+    ncol: 3
+    # Frame
+    frameon: True
+    # Legend position
+    loc: "upper right"
+
+  # Wavelet spectra parameters
+  spectrum:
+    # Color scale
+    cscale: "log"
+    # Frequency scale
+    yscale: "log"
+    # Colormap
+    cmap: "Spectral_r"
+    # Force color limits
+    clim: [1e-7, 1e0]
+
+  # Save parameters
+  save:
+    # DPI
+    dpi: 500

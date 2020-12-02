@@ -1,0 +1,77 @@
+# Time interval
+tint: ["2019-09-14T07:54:00.000", "2019-09-14T08:11:00.000"]
+
+# Outliers indices
+outliers:
+  # This event
+  Richard2021: [1, 6, 8, 34, 47]
+  # Wei2019 table
+  Wei2019: [0, 4, 9]
+
+# Flux Gate Magnetometer parameters
+fgm:
+  # Flux Gate Magnetometer data rate
+  data_rate: "srvy"
+  # Flux Gate Magnetometer data level
+  level: "l2"
+
+# Fast Plasma Investigation parameters
+fpi:
+  # Fast Plasma Investigation data rate
+  data_rate: "fast"
+  # Fast Plasma Investigation data level
+  level: "l2"
+  # Moments type
+  moments: "partial"
+  # Ion partial moment split index
+  part_idx_i: 19
+  # Electron partial moment split index
+  part_idx_e: 7
+
+# Figure parameters
+figure:
+  # Main parameters
+  main:
+    # Figure size
+    figsize: [9, 9]
+
+  # Grid spec parameters
+  gridspec:
+    # Left bound
+    left: 0.1
+    # Right bound
+    right: 0.9
+    # Bottom bound
+    bottom: 0.05
+    # Top bound
+    top: 0.95
+    # Horizontal spacing
+    wspace: 0.3
+
+  # Histogram parameters
+  hist:
+    # Face color
+    facecolor: "tab:blue"
+    # Edge color
+    edgecolor: "k"
+
+  # Error bars parameters
+  errorbar:
+    # Line style
+    linestyle: ""
+    # Marker style
+    marker: "o"
+
+  # Legend parameters
+  legend:
+    # Number of columns
+    ncol: 3
+    # Show frame
+    frameon: True
+    # Legend location
+    loc: "upper right"
+
+  # Save parameters
+  save:
+    # DPI
+    dpi: 500
