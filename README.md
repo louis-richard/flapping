@@ -1,6 +1,5 @@
 # Observations of Short-Period Ion-Scale Current Sheet Flapping
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![LASP](https://img.shields.io/badge/datasets-MMS_SDC-orange.svg)](https://lasp.colorado.edu/mms/sdc/) [![Twitter
-](https://img.shields.io/twitter/follow/IRF_Space?style=social)](https://twitter.com/irf_space)
+[![GitHub license](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE) [![LASP](https://img.shields.io/badge/datasets-MMS_SDC-orange.svg)](https://lasp.colorado.edu/mms/sdc/)
 
 ## Abstract
 
