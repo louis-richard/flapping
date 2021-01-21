@@ -20,10 +20,9 @@ import matplotlib.pyplot as plt
 from dateutil import parser as date_parser
 from pyrfu.mms import get_data
 from pyrfu.plot import plot_line
-from pyrfu.pyrf import (c_4_j, plasma_calc, c_4_grad, norm, mva, new_xyz, medfilt, calc_dt)
+from pyrfu.pyrf import (c_4_j, norm, mva, new_xyz, plasma_calc)
 
-from spf import (load_moments, remove_bz_offset, pressure_balance_b0,
-                 dec_temperature, make_labels)
+from spf import (load_moments, remove_bz_offset, dec_temperature, make_labels)
 
 
 def main(args):
@@ -55,25 +54,9 @@ def main(args):
     # Load moments of the velocity distribution functions
     moments_i, moments_e = load_moments(tint, cfg["fpi"], args)
 
-    # Estimate lobe field using pressure balance
-    b0 = pressure_balance_b0(b_xyz, moments_i, moments_e)
-
-    # Unpack number densities
-    n_i, n_e = moments_i[0], moments_e[0]
-
     # Unpack ion/electron temperature
     _, _, t_i = dec_temperature(b_xyz, moments_i)
     _, _, t_e = dec_temperature(b_xyz, moments_e)
-
-    plasma_params = plasma_calc(b0, t_i, t_e, n_i, n_e)
-
-    # Compute curvature
-    curvature_b = c_4_grad(r_mms, b_mms, "curv")
-
-    # Compute radius of curvature
-    r_c = 1 / norm(curvature_b)
-
-    kappas = [np.sqrt(r_c / (1e-3 * rho)) for rho in [plasma_params.rho_p, plasma_params.rho_e]]
 
     # Compute MVA frame
     b_lmn, _, lmn = mva(b_xyz)
@@ -97,70 +80,52 @@ def main(args):
     # Unpack bulk velocity
     v_lmn_i, v_lmn_e = [moments_lmn_i[1], moments_lmn_e[1]]
 
-    kappa_i_filtered = medfilt(kappas[0] ** 2, int(np.floor(2 / calc_dt(v_lmn_i))))
-    kappa_e_filtered = medfilt(kappas[1] ** 2, int(np.floor(2 / calc_dt(v_lmn_e))))
-
-    figure_options = dict()
-    gspecs_options = dict()
-    legend_options = dict()
-
     # Plot
-    fig, axs = plt.subplots(6, **cfg["figure"]["main"])
+    fig, axs = plt.subplots(5, **cfg["figure"]["main"])
     fig.subplots_adjust(**cfg["figure"]["subplots"])
 
     # B GSE
-    plot_line(axs[0], b_xyz)
+    plot_line(axs[0], b_lmn)
+    plot_line(axs[0], norm(b_lmn), color="tab:green")
     axs[0].set_ylim([-14, 14])
     axs[0].set_ylabel("$B$ [nT]")
-    axs[0].legend(["$B_L$", "$B_M$", "$B_N$"], **cfg["figure"]["legend"])
+    axs[0].legend(["$B_L$", "$B_M$", "$B_N$", "$|B|$"], **cfg["figure"]["legend"])
     axs[0].grid(True, which="both")
 
-    # kappa_i, kappa_e
-    plot_line(axs[1], kappa_i_filtered, "tab:blue")
-    plot_line(axs[1], kappa_e_filtered, "tab:red")
-    axs[1].axhline(10, color="k", linestyle="--")
-    axs[1].axhline(25, color="k", linestyle="-.")
+    # ViM, VeM, B_L
+    plot_line(axs[1], v_lmn_i[:, 1], color="tab:blue")
+    plot_line(axs[1], v_lmn_e[:, 1], color="tab:red")
+    axs[1].set_ylim([-420, 420])
+    axs[1].set_ylabel("$V_M$ [km s$^{-1}$]")
     axs[1].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
-    axs[1].set_yscale("log")
-    axs[1].set_ylabel("$\\kappa^2$")
     axs[1].grid(True, which="both")
 
-    # ViM, VeM, B_L
-    plot_line(axs[2], v_lmn_i[:, 1], "tab:blue")
-    plot_line(axs[2], v_lmn_e[:, 1], "tab:red")
+    # ViN, VeN, B_L
+    plot_line(axs[2], v_lmn_i[:, 2], color="tab:blue")
+    plot_line(axs[2], v_lmn_e[:, 2], color="tab:red")
     axs[2].set_ylim([-420, 420])
-    axs[2].set_ylabel("$V_M$ [km s$^{-1}$]")
+    axs[2].set_ylabel("$V_N$ [km s$^{-1}$]")
     axs[2].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
     axs[2].grid(True, which="both")
 
-    # ViN, VeN, B_L
-    plot_line(axs[3], v_lmn_i[:, 2], "tab:blue")
-    plot_line(axs[3], v_lmn_e[:, 2], "tab:red")
-    axs[3].set_ylim([-420, 420])
-    axs[3].set_ylabel("$V_N$ [km s$^{-1}$]")
-    axs[3].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
+    # Ni, Ne, B_L
+    plot_line(axs[3], n_e, color="tab:red")
+    axs[3].set_ylim([0.06, 0.34])
+    axs[3].set_ylabel("$N_e$ [cm$^{-3}$]")
     axs[3].grid(True, which="both")
 
-    # Ni, Ne, B_L
-    plot_line(axs[4], n_i, "tab:blue")
-    plot_line(axs[4], n_e, "tab:red")
-    axs[4].set_ylim([0.06, 0.34])
-    axs[4].set_ylabel("$N$ [cm$^{-3}$]")
-    axs[4].legend(["Ions", "Electrons"], **cfg["figure"]["legend"])
+    # JM, JN, B_L
+    plot_line(axs[4], j_lmn[:, 1], color="tab:orange")
+    plot_line(axs[4], j_lmn[:, 2], color="tab:green")
+    axs[4].set_ylim([-28, 28])
+    axs[4].set_ylabel("$J$ [nA m$^{-2}$]")
+    axs[4].legend(["$J_M$", "$J_N$"], **cfg["figure"]["legend"])
     axs[4].grid(True, which="both")
 
-    # JM, JN, B_L
-    plot_line(axs[5], j_lmn[:, 1], "tab:orange")
-    plot_line(axs[5], j_lmn[:, 2], "tab:green")
-    axs[5].set_ylim([-28, 28])
-    axs[5].set_ylabel("$J$ [nA m$^{-2}$]")
-    axs[5].legend(["$J_M$", "$J_N$"], **cfg["figure"]["legend"])
-    axs[5].grid(True, which="both")
-
     # Add magnetic field to all axes
-    for ax in axs[2:]:
+    for ax in axs[1:]:
         axb = ax.twinx()
-        plot_line(axb, b_lmn[:, 0], "darkgrey")
+        plot_line(axb, b_lmn[:, 0], color="darkgrey")
         axb.set_ylim([-14, 14])
         axb.set_ylabel("$B_L$ [nT]")
 
@@ -170,7 +135,7 @@ def main(args):
     fig.align_ylabels(axs)
 
     # Add panels labels
-    labels_pos = [0.02, 0.83]
+    labels_pos = [0.02, 0.85]
     _ = make_labels(axs, labels_pos)
 
     if args.figname:

@@ -48,7 +48,7 @@ figure:
   # Legend parameters
   legend:
     # Number of columns
-    ncol: 3
+    ncol: 4
     # Show frame
     frameon: True
     # Legend location

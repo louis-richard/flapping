@@ -26,6 +26,18 @@ from spf import (load_timing, remove_bz_offset, fit_harris_cs,
                  calc_vph_current, scaling_h_lambda, make_labels)
 
 
+SMALL_SIZE = 10
+MEDIUM_SIZE = 12
+BIGGER_SIZE = 12
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 def main(args):
     """main function
     """
@@ -210,11 +222,11 @@ def main(args):
     axs1[1].yaxis.set_label_position("right")
     axs1[1].yaxis.tick_right()
     axs1[1].set_xlim([0, 2.6e-3])
-    axs1[1].set_ylim([0, 8500])
+    axs1[1].set_ylim([0, 9000])
     axs1[1].grid(True, which="both")
 
     # Add panels labels
-    labels_pos = [0.05, 0.95]
+    labels_pos = [0.079, 0.95]
     _ = make_labels(axs0 + axs1, labels_pos)
 
     if args.figname:

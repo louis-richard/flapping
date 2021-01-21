@@ -42,9 +42,9 @@ figure:
     # Right bound
     right: 0.9
     # Bottom bound
-    bottom: 0.05
+    bottom: 0.06
     # Top bound
-    top: 0.95
+    top: 0.94
     # Horizontal spacing
     wspace: 0.3
 

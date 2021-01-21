@@ -21,12 +21,23 @@ import matplotlib.pyplot as plt
 
 from pyrfu.pyrf import (c_4_j, mva, new_xyz, resample, norm, t_eval, plasma_calc)
 from pyrfu.mms import get_data
-from pyrfu.plot import plot_spectr, zoom
+from pyrfu.plot import plot_spectr, zoom, plot_line
 from astropy import constants
 
 from spf import (load_timing, load_moments, make_labels, remove_bz_offset,
                  fit_harris_cs, dec_temperature, st_derivative)
 
+SMALL_SIZE = 16
+MEDIUM_SIZE = 22
+BIGGER_SIZE = 22
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 def main(args):
     """main function
@@ -98,11 +109,19 @@ def main(args):
     _, _, t_i = dec_temperature(b_xyz, moments_i)
     _, _, t_e = dec_temperature(b_xyz, moments_i)
 
+    plasma_params = plasma_calc(b_lmn, t_i, t_e, n_i, n_e)
+    f, ax = plt.subplots(1)
+    plot_line(ax, plasma_params.rho_e)
+    ax.set_yscale("log")
+    plt.show()
+
     # Compute plasma parameters
     plasma_params = plasma_calc(harris_fit.B0, t_i, t_e, n_i, n_e)
 
     # Averaged ion inertial length
     d_i = 1e-3 * np.mean(plasma_params.l_i).data
+    r_p = 1e-3 * np.mean(plasma_params.rho_p).data
+    r_e = 1e-3 * np.mean(plasma_params.rho_e).data
 
     # Normalize thickness by ion inertial length
     h_d, dh_d = [h_d / d_i, dh_d / d_i]

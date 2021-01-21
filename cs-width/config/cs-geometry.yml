@@ -24,7 +24,7 @@ fpi:
 # Figure parameters
 figure:
   # Figure size
-  figsize: [6.5, 9]
+  figsize: [16, 12]
 
 
 
@@ -33,7 +33,7 @@ figure:
   # Main parameters
   main:
     # Figure size
-    figsize: [16, 9]
+    figsize: [16, 12]
 
   # Grid spec parameters
   gridspec:
