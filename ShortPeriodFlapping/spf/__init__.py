@@ -25,5 +25,6 @@ from .compress_cwt import compress_cwt
 
 from .calc_ol_terms import calc_ol_terms
 
+from .lmn_cs import lmn_cs
 
-
+from .calc_disprel_tm import calc_disprel_tm

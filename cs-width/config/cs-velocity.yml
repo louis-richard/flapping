@@ -3,6 +3,8 @@ tints:
   # Flapping time interval
   flapping: ["2019-09-14T07:54:00.000", "2019-09-14T08:11:00.000"]
 
+data_path: "/Users/louisr/Documents/PhD/Y1/flapping/data"
+
 # Flux Gate Magnetometer parameters
 fgm:
   # Flux Gate Magnetometer data rate
@@ -35,7 +37,7 @@ figure:
   # Subplots parameters
   subplots:
     # Bottom bound
-    bottom: 0.1
+    bottom: 0.05
     # Top bound
     top: 0.95
     # Left bound

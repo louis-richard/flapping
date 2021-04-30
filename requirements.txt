@@ -1,1 +1,10 @@
-pyrfu>=1.8.1
+pyrfu==2.3.5
+PyYAML>=5.3.1
+numpy>=1.19.5
+xarray>=0.16.2
+matplotlib>=3.3.3
+astropy~=4.2
+cycler>=0.10.0
+python-dateutil~=2.8.1
+h5py>=2.10.0
+scipy>=1.6.0

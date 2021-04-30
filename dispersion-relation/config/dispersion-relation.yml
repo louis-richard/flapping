@@ -1,10 +1,12 @@
 # Time interval
 tint: ["2019-09-14T07:54:00.000", "2019-09-14T08:11:00.000"]
 
+data_path: "/Users/louisr/Documents/PhD/Y1/flapping/data"
+
 # Outliers indices
 outliers:
   # This event
-  Richard2021: [1, 6, 8, 34, 47]
+  Richard2021: [1, 5, 7, 33, 46]
   # Wei2019 table
   Wei2019: [0, 4, 9]
 

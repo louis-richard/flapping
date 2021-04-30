@@ -15,13 +15,13 @@
 import numpy as np
 import xarray as xr
 
-from scipy import optimize
-from pyrfu.pyrf import ts_vec_xyz, histogram2d, median_bins
+from scipy import optimize, stats, constants
+from pyrfu.pyrf import ts_vec_xyz, histogram2d, median_bins, optimize_nbins_2d
 
 
 def fit_harris_cs(b_xyz, j_xyz):
-    """Compute the Harris fit of the current density with respect to the magnetic field. USefull
-    to get the lobe field and the Harris scale.
+    """Compute the Harris fit of the current density with respect to the
+    magnetic field. USefull to get the lobe field and the Harris scale.
 
     Parameters
     ----------
@@ -40,30 +40,42 @@ def fit_harris_cs(b_xyz, j_xyz):
     j_perp = np.sqrt(j_xyz[:, 1] ** 2 + j_xyz[:, 2] ** 2)
 
     # Fit J vs B using Harris model
-    def mod(x, a):
-        return a * (1 - (x / 15) ** 2)
+    def mod(x, a, b):
+        return (b / (constants.mu_0 * a)) * (1 - (x / b) ** 2)
 
     opt, g = optimize.curve_fit(mod, b_xyz[:, 0], j_perp)
 
-    b_lobe = 15
-    harris_scale = opt[0]
-    sigma_scale = np.sqrt(float(g))
+    #b_lobe = 15
+    harris_scale, b_lobe = opt
+    sigma_scale, sigma_b_lobe = np.sqrt(np.diag(g))
 
     b0 = np.zeros((len(b_xyz), 3))
     b0[:, 0] = b_lobe * np.ones(len(b_xyz))
     b0 = ts_vec_xyz(b_xyz.time.data, b0)
 
-    hist_b_j_mn = histogram2d(b_xyz[:, 0], j_perp, bins=100)  	# 2D histogram
-    med_b_j_mn = median_bins(b_xyz[:, 0], j_perp, bins=10)  	# Median
+    n_bins = optimize_nbins_2d(b_xyz[:, 0], j_perp)
 
-    harris = {"B0": b0, "hist": hist_b_j_mn, "bbins": med_b_j_mn.bins.data,
+    hist_b_j_mn = histogram2d(b_xyz[:, 0], j_perp, bins=n_bins)  # 2D histogram
+    _, _, med_b_j_mn = median_bins(b_xyz[:, 0], j_perp, bins=10)  	# Median
+
+    harris = {"B0": b0, "b_lobe": b_lobe, "sigma_b_lobe": sigma_b_lobe,
+              "scale": harris_scale, "sigma_scale": sigma_scale,
+              "hist": hist_b_j_mn, "bbins": med_b_j_mn.bins.data,
               "medbin": (["bbins"], med_b_j_mn.data.data),
               "medstd": (["bbins"], med_b_j_mn.sigma.data),
-              "hires_b": np.linspace(np.min(b_xyz[:, 0]), np.max(b_xyz[:, 0]), 100, endpoint=True)}
+              "hires_b": np.linspace(np.min(b_xyz[:, 0]),
+                                     np.max(b_xyz[:, 0]), 100, endpoint=True)}
 
-    harris["pred_j_perp"] = (["hires_b"], mod(harris["hires_b"], harris_scale))
-    harris["bound_upper"] = (["hires_b"], mod(harris["hires_b"], harris_scale + 1.96 * sigma_scale))
-    harris["bound_lower"] = (["hires_b"], mod(harris["hires_b"], harris_scale - 1.96 * sigma_scale))
+    harris["pred_j_perp"] = (["hires_b"],
+                             mod(harris["hires_b"], harris_scale, b_lobe))
+    """
+    harris["bound_upper"] = (["hires_b"],
+                             mod(harris["hires_b"],
+                                 harris_scale + 1.96 * sigma_scale))
+    harris["bound_lower"] = (["hires_b"],
+                             mod(harris["hires_b"],
+                                 harris_scale - 1.96 * sigma_scale))
+    """
 
     harris = xr.Dataset(harris)
 

@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Reproduces the Figure 5 in Richard et al. 2021.
+@author: Louis Richard
+"""
+
 import yaml
 import string
 import argparse
@@ -19,13 +23,14 @@ import numpy as np
 import xarray as xr
 import matplotlib.pyplot as plt
 
+from scipy import constants
 from pyrfu.pyrf import (c_4_j, mva, new_xyz, resample, norm, t_eval, plasma_calc)
 from pyrfu.mms import get_data
-from pyrfu.plot import plot_spectr, zoom, plot_line
-from astropy import constants
+from pyrfu.plot import plot_spectr, zoom
 
-from spf import (load_timing, load_moments, make_labels, remove_bz_offset,
-                 fit_harris_cs, dec_temperature, st_derivative)
+from spf import (lmn_cs, load_timing, load_moments, make_labels,
+                 remove_bz_offset, fit_harris_cs, dec_temperature,
+                 st_derivative)
 
 SMALL_SIZE = 16
 MEDIUM_SIZE = 22
@@ -49,33 +54,34 @@ def main(args):
     mms_ids = np.arange(1, 5)
 
     # Load spacecraft position and background magnetic field
-    r_mms = [get_data("R_gse", cfg["tint"], i, args.verbose) for i in mms_ids]
+    r_mms = [get_data("R_gse", cfg["tint"], i,
+                      data_path=cfg["data_path"]) for i in mms_ids]
 
     # Load background magnetic field
     suf_b = "fgm_{}_{}".format(cfg["fgm"]["data_rate"], cfg["fgm"]["level"])
-    b_mms = [get_data("B_gse_{}".format(suf_b), cfg["tint"], i, args.verbose) for i in mms_ids]
+    b_mms = [get_data("B_gse_{}".format(suf_b), cfg["tint"], i, args.verbose,
+                      data_path=cfg["data_path"]) for i in mms_ids]
 
     # Remove offset on z component of the background magnetic field
     b_mms = remove_bz_offset(b_mms)
 
     # Load moments
-    moments_i, moments_e = load_moments(cfg["tint"], cfg["fpi"], args)
+    moments_i, moments_e = load_moments(cfg["tint"], cfg["fpi"], args,
+                                        cfg["data_path"])
 
     # Compute current density
     j_xyz, div_b, b_xyz, _, _, _ = c_4_j(r_mms, b_mms)
     j_xyz *= 1e9  														# j A.m^{-2}->nA.m^{-2}
 
-    # Compute MVA frame
-    _, _, lmn = mva(b_xyz)
-
-    lmn = np.vstack([lmn[:, 0], -lmn[:, 2], lmn[:, 1]]).T
-
-    # transform magnetic field and current density to LMN coordinates system
-    b_lmn, j_lmn = [new_xyz(field, lmn) for field in [b_xyz, j_xyz]]
-
     # Resample moments to magnetic field sampling
     moments_i = [resample(mom, b_xyz) for mom in moments_i]
     moments_e = [resample(mom, b_xyz) for mom in moments_e]
+
+    # Compute new coordinates system
+    lmn = lmn_cs(b_xyz, moments_i[1])
+
+    # transform magnetic field and current density to LMN coordinates system
+    b_lmn, j_lmn = [new_xyz(field, lmn) for field in [b_xyz, j_xyz]]
 
     # Fit J perp vs B as Harris like CS
     harris_fit = fit_harris_cs(b_lmn, j_lmn)
@@ -91,9 +97,11 @@ def main(args):
 
     # Use Harris like CS lobe field to estimate the thickness
     # Compute thickness as h = B0/curl(B) = B0/(m0*J) and the error
-    mu0 = constants.mu0.value
-    h_c = norm(harris_fit.B0) / (1e3 * mu0 * norm(j_lmn)) 	# continuous thickness
-    h_d = t_eval(h_c, crossing_times) 								# discrete thickness
+    mu0 = constants.mu_0
+    # continuous thickness
+    h_c = norm(harris_fit.B0) / (1e3 * mu0 * norm(j_lmn))
+    # discrete thickness
+    h_d = t_eval(h_c, crossing_times)
 
     # Errors
     # relative error on curlometer technique
@@ -108,12 +116,6 @@ def main(args):
     # Unpack ion/electron temperature
     _, _, t_i = dec_temperature(b_xyz, moments_i)
     _, _, t_e = dec_temperature(b_xyz, moments_i)
-
-    plasma_params = plasma_calc(b_lmn, t_i, t_e, n_i, n_e)
-    f, ax = plt.subplots(1)
-    plot_line(ax, plasma_params.rho_e)
-    ax.set_yscale("log")
-    plt.show()
 
     # Compute plasma parameters
     plasma_params = plasma_calc(harris_fit.B0, t_i, t_e, n_i, n_e)
@@ -146,18 +148,23 @@ def main(args):
     axs1 = [fig.add_subplot(gs20[i]) for i in range(2)]
     axs2 = [fig.add_subplot(gs30[i]) for i in range(1)]
 
-    axs0[0], caxs0 = plot_spectr(axs0[0], harris_fit.hist, cscale="log", cmap="viridis")
-    axs0[0].errorbar(harris_fit.bbins, harris_fit.medbin, harris_fit.medstd, marker="s", color="k")
-    axs0[0].plot(harris_fit.hires_b, harris_fit.pred_j_perp, "k-", linewidth=2)
+    axs0[0], caxs0 = plot_spectr(axs0[0], harris_fit.hist,
+                                 cscale="log", cmap="viridis")
+    axs0[0].errorbar(harris_fit.bbins, harris_fit.medbin,
+                     harris_fit.medstd, marker="s", color="tab:red")
+    axs0[0].plot(harris_fit.hires_b, harris_fit.pred_j_perp,
+                 color="tab:red", linestyle="--", linewidth=2)
     axs0[0].set_ylim([0, 18])
     axs0[0].set_xlabel("$B_L$ [nT]")
     axs0[0].set_ylabel("$J_{MN}$ [nA m$^{-2}$]")
-    caxs0.set_ylabel("#")
-    labels0 = ["Harris fit $B_0$={:3.2f} nT".format(harris_fit.B0.data[0, 0]), "median"]
+    caxs0.set_ylabel("Counts")
+    labels0 = ["Harris fit $B_0$={:2.0f} nT".format(harris_fit.B0.data[0, 0]),
+               "median"]
     axs0[0].legend(labels0, **cfg["figure"]["legend"])
 
     for ax in axs1:
-        ax.errorbar(yc_m.data, zc_n.data, h_d.data / 2, **cfg["figure"]["errorbar"])
+        ax.errorbar(yc_m.data, zc_n.data, h_d.data / 2, **cfg["figure"][
+            "errorbar"])
         ax.plot(geometry.y_m.data, geometry.z_n.data, "tab:blue")
         ax.set_ylim([-6, 6])
         ax.set_xlabel("$M/d_i$")
@@ -167,6 +174,8 @@ def main(args):
     axs1[1].set_xticks(yc_m.data)
     axs1[0].set_xlim([0, np.max(geometry.y_m.data)])
     axs1[1].set_xlim([70, 105])
+    axs1[0].grid(True, which="both")
+    axs1[1].grid(True, which="both")
 
     zoom(axs1[1], axs1[0], ec="k")
 
@@ -186,10 +195,19 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
-    parser.add_argument("--figname", help="Path and name of the figure to save with extension.",
+    parser.add_argument("-v", "--verbose",
+                        help="increase output verbosity",
+                        action="store_true")
+    parser.add_argument("--figname",
+                        help="Path and name of the figure with extension.",
                         type=str, default="")
-    parser.add_argument("--config", type=str, required=True, help="Path to (.yml) config file.")
-    parser.add_argument("--timing", type=str, required=True, help="Path to (.h5) timing file.")
+    parser.add_argument("--config",
+                        type=str,
+                        required=True,
+                        help="Path to (.yml) config file.")
+    parser.add_argument("--timing",
+                        type=str,
+                        required=True,
+                        help="Path to (.h5) timing file.")
 
     main(parser.parse_args())

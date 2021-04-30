@@ -1,6 +1,9 @@
 # Time intervals
 tint: ["2019-09-14T07:54:00.000", "2019-09-14T08:11:00.000"]
 
+data_path: "/Users/louisr/Documents/PhD/Y1/flapping/data"
+
+
 # Flux Gate Magnetometer parameters
 fgm:
   # Flux Gate Magnetometer data rate
@@ -20,13 +23,6 @@ fpi:
   part_idx_i: 19
   # Electron partial moment split index
   part_idx_e: 7
-
-# Figure parameters
-figure:
-  # Figure size
-  figsize: [16, 12]
-
-
 
 # Figure parameters
 figure:

@@ -18,7 +18,7 @@ from pyrfu.mms import get_data
 from pyrfu.pyrf import avg_4sc
 
 
-def load_moments(tint, cfg, args):
+def load_moments(tint, cfg, args, data_path):
     """
     Load FPI moments of the velocity distribution functions.
 
@@ -34,28 +34,28 @@ def load_moments(tint, cfg, args):
 
         # Load partial moments
         # number density
-        part_n_i = [get_data("partNi_{}".format(suf), tint, i, args.verbose) for i in
-                    ic[:-1]]
-        part_n_e = [get_data("partNe_{}".format(suf), tint, i, args.verbose) for i in
-                    ic[:-1]]
+        part_n_i = [get_data("partNi_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
+        part_n_e = [get_data("partNe_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
 
         # bulk velocity
-        part_v_i = [get_data("partVi_gse_{}".format(suf), tint, i, args.verbose) for i
-                    in ic[:-1]]
-        part_v_e = [get_data("partVe_gse_{}".format(suf), tint, i, args.verbose) for i
-                    in ic[:-1]]
+        part_v_i = [get_data("partVi_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
+        part_v_e = [get_data("partVe_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
 
         # temperature tensor
-        part_t_i = [get_data("partTi_gse_{}".format(suf), tint, i, args.verbose) for i
-                    in ic[:-1]]
-        part_t_e = [get_data("partTe_gse_{}".format(suf), tint, i, args.verbose) for i
-                    in ic[:-1]]
+        part_t_i = [get_data("partTi_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
+        part_t_e = [get_data("partTe_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
 
         # pressure tensor
-        part_p_i = [get_data("partPi_gse_{}".format(suf), tint, i, args.verbose) for i
-                    in ic[:-1]]
-        part_p_e = [get_data("partPe_gse_{}".format(suf), tint, i, args.verbose) for i
-                    in ic[:-1]]
+        part_p_i = [get_data("partPi_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
+        part_p_e = [get_data("partPe_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
 
         # split partial moments
         # number density
@@ -99,10 +99,10 @@ def load_moments(tint, cfg, args):
         raise ValueError("Invalid moments type")
 
     # Load spintone correction
-    spintone_i = [get_data("STi_gse_{}".format(suf), tint, i, args.verbose) for i in
-                  ic[:-1]]
-    spintone_e = [get_data("STe_gse_{}".format(suf), tint, i, args.verbose) for i in
-                  ic[:-1]]
+    spintone_i = [get_data("STi_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
+    spintone_e = [get_data("STe_gse_{}".format(suf), tint, i, args.verbose,
+                             data_path=data_path) for i in ic[:-1]]
 
     # remove spintone correction
     v_i = [v - spintone_i[i] for i, v in enumerate(v_i)]

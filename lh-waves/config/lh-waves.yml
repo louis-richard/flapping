@@ -5,6 +5,8 @@ tints:
   # Close-up time interval
   close-up: ["2019-09-14T08:00:00.000", "2019-09-14T08:02:00.000"]
 
+data_path: "/Users/louisr/Documents/PhD/Y1/flapping/data"
+
 # Flux Gate Magnetometer parameters
 fgm:
   # Flux Gate Magnetometer data rate

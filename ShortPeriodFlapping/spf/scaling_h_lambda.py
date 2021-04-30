@@ -29,7 +29,7 @@ def scaling_h_lambda(h, dh, disprel, indices):
     dks = disprel.k_err[not_indices]
     hs = h[not_indices]
     dhs = dh[not_indices]
-    weights = 1 / disprel.k_err[not_indices]
+    weights = 1 / (disprel.k_err[not_indices])
 
     # Model scaling CS thickness vs wavelength
     def model_lamb_h(x, a):

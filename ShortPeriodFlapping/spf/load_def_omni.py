@@ -18,7 +18,7 @@ from pyrfu.mms import get_data
 from pyrfu.pyrf import avg_4sc
 
 
-def load_def_omni(tint, cfg):
+def load_def_omni(tint, cfg, data_path):
     """Loads Density Energy Flux spectrum
 
     Parameters
@@ -39,8 +39,10 @@ def load_def_omni(tint, cfg):
     suf = "fpi_{}_{}".format(cfg["data_rate"], cfg["level"])
 
     # Ion/electron omni directional energy flux
-    def_omni_mms_i = [get_data("DEFi_{}".format(suf), tint, i) for i in ic[:-1]]
-    def_omni_mms_e = [get_data("DEFe_{}".format(suf), tint, i) for i in ic[:-1]]
+    def_omni_mms_i = [get_data("DEFi_{}".format(suf), tint, i,
+                               data_path=data_path) for i in ic[:-1]]
+    def_omni_mms_e = [get_data("DEFe_{}".format(suf), tint, i,
+                               data_path=data_path) for i in ic[:-1]]
 
     def_omni_i, def_omni_e = [avg_4sc(def_omni) for def_omni in [def_omni_mms_i, def_omni_mms_e]]
 
